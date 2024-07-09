@@ -7,6 +7,8 @@
 
 import UIKit
 
+var isUser = true
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
