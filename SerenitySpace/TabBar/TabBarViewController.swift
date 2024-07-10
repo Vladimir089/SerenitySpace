@@ -25,7 +25,11 @@ class TabBarViewController: UITabBarController {
         let racionTabItem = UITabBarItem(title: "", image: .tab1.resize(targetSize: CGSize(width: 24, height: 24)), tag: 0)
         racionVC.tabBarItem = racionTabItem
         
-        viewControllers = [racionVC]
+        let waterVC = WaterViewController()
+        let waterTabItem = UITabBarItem(title: "", image: .tab2.resize(targetSize: CGSize(width: 24, height: 24)), tag: 0)
+        waterVC.tabBarItem = waterTabItem
+        
+        viewControllers = [racionVC, waterVC]
         
     }
     

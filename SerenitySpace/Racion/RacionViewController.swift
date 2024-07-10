@@ -13,6 +13,7 @@ var user: User?
 
 protocol RacionViewControllerDelegate: AnyObject {
     func reloadTable()
+    func openEdit(index: Int)
 }
 
  
@@ -30,6 +31,9 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
     var saveButton: UIButton?
     var sex = "Women"
     
+    var name = ""
+    var age = ""
+    
     
    
     
@@ -41,6 +45,7 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     
     @objc func keyboardWillShow(notification: NSNotification) {
+        
         UIView.animate(withDuration: 0.3) {
             self.view.transform = CGAffineTransform(translationX: 0, y: -100)
             
@@ -48,6 +53,8 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
+        name = nameTextField?.text ?? ""
+        age = ageTextField?.text ?? ""
         UIView.animate(withDuration: 0.3) {
             self.view.transform = .identity
         }
@@ -57,8 +64,7 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         hideNavigationBar()
-        mainCollection?.reloadData()
-        historyCollection?.reloadData()
+
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -91,8 +97,7 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     func createInterface() {
         
-        let gestureHide = UITapGestureRecognizer(target: self, action: #selector(hideKeybpard))
-        view.addGestureRecognizer(gestureHide)
+
         
         let backgroundImageView: UIImageView = {
             let image = UIImage.background
@@ -115,6 +120,7 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
             collection.backgroundColor = .clear
             collection.delegate = self
             collection.dataSource = self
+            collection.isUserInteractionEnabled = true
             return collection
         }()
         view.addSubview(mainCollection!)
@@ -133,8 +139,8 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
             collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "second")
             collection.backgroundColor = .clear
             collection.delegate = self
-            
-            layout.sectionInset = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
+            collection.isUserInteractionEnabled = true
+            layout.sectionInset = UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
             
             collection.dataSource = self
             return collection
@@ -368,6 +374,11 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
             make.height.equalTo(450)
             make.centerY.equalToSuperview()
         })
+        
+        let gestureHide = UITapGestureRecognizer(target: self, action: #selector(hideKeybpard))
+        profileView?.addGestureRecognizer(gestureHide)
+        
+        
         checkFill()
     }
     
@@ -408,9 +419,7 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
             saveButton?.isUserInteractionEnabled = false
         }
         
-        editImageView?.image = UIImage(data: user?.photo ?? Data()) ?? .imageProfile
-        nameTextField?.text = user?.name ?? ""
-        ageTextField?.text = String(user?.age ?? 0)
+       
         
         if user?.sex == "Women" {
             sex = "Women"
@@ -463,6 +472,10 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     
     @objc func showEditProfile() {
+        editImageView?.image = UIImage(data: user?.photo ?? Data()) ?? .imageProfile
+        nameTextField?.text = user?.name ?? ""
+        ageTextField?.text = String(user?.age ?? 0)
+        
         UIView.animate(withDuration: 0.5) {
             self.profileView?.alpha = 100
         }
@@ -493,7 +506,7 @@ class RacionViewController: UIViewController, UIImagePickerControllerDelegate, U
    
 
 }
-
+//ДОДЕЛАТЬ ПРОСМОТР ЭЛЕМЕНТА И ЕГО РЕДАКТИРВОАНИЕ 
 
 extension RacionViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -720,9 +733,23 @@ extension RacionViewController: UICollectionViewDelegate, UICollectionViewDataSo
         
     }
     
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == historyCollection && racionArr.count != 0  {
+            let vc = DetailViewController()
+            vc.delegate = self
+            vc.index = indexPath.row
+            self.present(vc, animated: true)
+        }
+    }
+    
     @objc func openHistory() {
         let vc = NewHistoryViewController()
         vc.delegate = self
+        vc.isEditOldValue = false
         self.present(vc, animated: true)
     }
     
@@ -763,6 +790,26 @@ extension RacionViewController: UITextFieldDelegate {
  
 
 extension RacionViewController: RacionViewControllerDelegate {
+    
+    func openEdit(index: Int) {
+        let vc = NewHistoryViewController()
+        vc.index = index
+        vc.isEditOldValue = true
+        let image = UIImage(data: racionArr[index].photo)
+        vc.imageViewBlude?.image = image
+        vc.name = racionArr[index].name
+        vc.date = racionArr[index].date
+        vc.carbs = racionArr[index].carbs
+        vc.kcal = racionArr[index].kcal
+        vc.protein = racionArr[index].protein
+        vc.fats = racionArr[index].fats
+        
+        var ing = racionArr[index].ingridients
+        vc.indgridients = ing
+        vc.delegate = self
+        self.present(vc, animated: true)
+    }
+    
     func reloadTable() {
         mainCollection?.reloadData()
         historyCollection?.reloadData()

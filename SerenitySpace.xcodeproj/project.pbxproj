@@ -19,6 +19,8 @@
 		1586C0812C3C06460098C526 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1586C0802C3C06460098C526 /* TabBarViewController.swift */; };
 		1586C0842C3C266D0098C526 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1586C0832C3C266D0098C526 /* Models.swift */; };
 		1586C0882C3D69BF0098C526 /* NewHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1586C0872C3D69BF0098C526 /* NewHistoryViewController.swift */; };
+		15A93CE22C3E9684002EE285 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A93CE12C3E9684002EE285 /* DetailViewController.swift */; };
+		15A93CE62C3ECA8D002EE285 /* WaterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A93CE52C3ECA8D002EE285 /* WaterViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,8 @@
 		1586C0802C3C06460098C526 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		1586C0832C3C266D0098C526 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		1586C0872C3D69BF0098C526 /* NewHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHistoryViewController.swift; sourceTree = "<group>"; };
+		15A93CE12C3E9684002EE285 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		15A93CE52C3ECA8D002EE285 /* WaterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +72,7 @@
 		1586C05D2C3BEA700098C526 /* SerenitySpace */ = {
 			isa = PBXGroup;
 			children = (
+				15A93CE32C3ECA75002EE285 /* Water */,
 				1586C0822C3C265E0098C526 /* Model */,
 				1586C07F2C3C06280098C526 /* TabBar */,
 				1586C07C2C3C060B0098C526 /* Racion */,
@@ -112,6 +117,7 @@
 			children = (
 				1586C07D2C3C061B0098C526 /* RacionViewController.swift */,
 				1586C0872C3D69BF0098C526 /* NewHistoryViewController.swift */,
+				15A93CE12C3E9684002EE285 /* DetailViewController.swift */,
 			);
 			path = Racion;
 			sourceTree = "<group>";
@@ -130,6 +136,14 @@
 				1586C0832C3C266D0098C526 /* Models.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		15A93CE32C3ECA75002EE285 /* Water */ = {
+			isa = PBXGroup;
+			children = (
+				15A93CE52C3ECA8D002EE285 /* WaterViewController.swift */,
+			);
+			path = Water;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,7 +223,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15A93CE22C3E9684002EE285 /* DetailViewController.swift in Sources */,
 				1586C05F2C3BEA700098C526 /* AppDelegate.swift in Sources */,
+				15A93CE62C3ECA8D002EE285 /* WaterViewController.swift in Sources */,
 				1586C0752C3BEC9C0098C526 /* OneBoardingUserViewController.swift in Sources */,
 				1586C0782C3BECC80098C526 /* LoadViewController.swift in Sources */,
 				1586C07E2C3C061B0098C526 /* RacionViewController.swift in Sources */,

@@ -19,7 +19,9 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
     var nameTextField, dateTextField: UITextField?
     var carbsTextField, kcalTextField, proteinTextField, fatsTextField: UITextField?
     var isEdit = 0
-    var isEditElement = false
+    var isEditElement: Bool?
+    var index = 0
+    var isEditOldValue = false
     
     var imageViewBlude: UIImageView?
     var indgridients: [Ingridients] = []
@@ -62,11 +64,18 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
     }
     
     @objc func saveComponent() {
+        
         let newBlud = blud(name: name ?? "", date: date ?? "", carbs: carbs ?? "", protein: protein ?? "", kcal: kcal ?? "", fats: fats ?? "", photo: imageViewBlude?.image?.jpegData(compressionQuality: 0.5) ?? Data(), ingridients: indgridients)
-        racionArr.append(newBlud)
         
         
+        print(isEditElement)
+
         
+        if isEditOldValue == false {
+            racionArr.append(newBlud)
+        } else {
+            racionArr[index] = newBlud
+        }
         
         
         
@@ -83,6 +92,19 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
         
     }
     
+    func check() {
+        if let nameText = nameTextField?.text, !nameText.isEmpty,
+           let dateText = dateTextField?.text, !dateText.isEmpty,
+           let carbsText = carbsTextField?.text, !carbsText.isEmpty,
+           let kcalText = kcalTextField?.text, !kcalText.isEmpty,
+           let proteinText = proteinTextField?.text, !proteinText.isEmpty,
+           let fatsText = fatsTextField?.text, !fatsText.isEmpty {
+            saveEditButton?.isEnabled = true
+        } else {
+            saveEditButton?.isEnabled = false
+        }
+    }
+    
     
     //СОХРАНЕНИЕ В ФАЙЛ
     func saveAthleteArrToFile(data: Data) throws {
@@ -95,7 +117,13 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
         }
     }
     
+    @objc func hideKey() {
+        view.endEditing(true)
+    }
+    
     func createInerface() {
+        
+
         
         let hideView: UIView = {
             let view = UIView()
@@ -117,6 +145,7 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
             button.backgroundColor = .clear
             button.setTitle("Save", for: .normal)
             button.setTitleColor(UIColor(red: 30/255, green: 171/255, blue: 78/255, alpha: 1), for: .normal)
+            button.setTitleColor(UIColor(red: 30/255, green: 171/255, blue: 78/255, alpha: 0.5), for: .disabled)
             return button
         }()
         view.addSubview(saveEditButton!)
@@ -126,8 +155,15 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
         saveEditButton?.addTarget(self, action: #selector(saveComponent), for: .touchUpInside)
         
         imageViewBlude = {
-            let image = UIImage.newBlude
-            let imageView = UIImageView(image: image)
+            let imageView = UIImageView()
+            if isEditOldValue == false {
+                let image = UIImage.newBlude
+                imageView.image = image
+            } else {
+                let image = UIImage(data: racionArr[index].photo)
+                imageView.image = image
+            }
+           
             imageView.contentMode = .scaleAspectFill
             imageView.layer.cornerRadius = 16
             imageView.clipsToBounds = true
@@ -301,7 +337,7 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
             make.height.equalTo(334)
         })
         
-        
+        check()
     }
     
     func checkBut() {
@@ -312,6 +348,7 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
             saveComponentButton?.removeTarget(nil, action: nil, for: .allEvents)
             saveComponentButton?.addTarget(self, action: #selector(newComponent), for: .touchUpInside)
         }
+        check()
     }
     
     @objc func editElement() {
@@ -319,13 +356,14 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
         indgridients[isEdit] = newComponent
         collection?.reloadData()
         hide()
+        check()
     }
     
     @objc func newComponent() {
         let newComponent = Ingridients(name: nameComponentTextField?.text ?? "", quanity: quanComponentTextField?.text ?? "")
         indgridients.append(newComponent)
         collection?.reloadData()
-       
+        check()
         hide()
     }
     
@@ -337,6 +375,7 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
             saveComponentButton?.alpha = 0.5
             saveComponentButton?.isUserInteractionEnabled = false
         }
+        check()
     }
     
     @objc func hideEditViewKeyboard() {
@@ -352,7 +391,7 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
             self.addNewComponent?.alpha = 0
         }
         view.endEditing(true)
-  
+        check()
     }
     
     
@@ -362,6 +401,7 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
         imagePickerController.sourceType = .photoLibrary
         imagePickerController.allowsEditing = true
         present(imagePickerController, animated: true, completion: nil)
+        check()
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -371,10 +411,12 @@ class NewHistoryViewController: UIViewController,  UIImagePickerControllerDelega
             imageViewBlude?.image = originalImage
         }
         dismiss(animated: true, completion: nil)
+        check()
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+        check()
     }
     
     
@@ -394,7 +436,7 @@ extension NewHistoryViewController: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "main", for: indexPath)
         cell.subviews.forEach { $0.removeFromSuperview() }
-        
+        let gestureHide = UITapGestureRecognizer(target: self, action: #selector(hideKey))
         cell.layer.shadowOpacity = 0
         cell.layer.shadowRadius = 0
         cell.layer.shadowOffset = .zero
@@ -402,6 +444,7 @@ extension NewHistoryViewController: UICollectionViewDelegate, UICollectionViewDa
         cell.backgroundColor = .white
         
         if indexPath.row == 0 {
+            cell.addGestureRecognizer(gestureHide)
             let labelName = UILabel()
             labelName.text = "Name"
             labelName.textColor = .black
@@ -435,6 +478,7 @@ extension NewHistoryViewController: UICollectionViewDelegate, UICollectionViewDa
         }
         
         if indexPath.row == 1 {
+            cell.addGestureRecognizer(gestureHide)
             let labelName = UILabel()
             labelName.text = "Date"
             labelName.textColor = .black
@@ -483,7 +527,7 @@ extension NewHistoryViewController: UICollectionViewDelegate, UICollectionViewDa
         }
         
         if indexPath.row == 2 {
-            
+            cell.addGestureRecognizer(gestureHide)
             let carbImageView = UIImageView(image: .star)
             cell.addSubview(carbImageView)
             carbImageView.snp.makeConstraints { make in
@@ -640,7 +684,7 @@ extension NewHistoryViewController: UICollectionViewDelegate, UICollectionViewDa
                 make.centerY.equalTo(ingridientsLabel)
             }
             buttonAdd.addTarget(self, action: #selector(openComp), for: .touchUpInside)
-            
+                  
         }
         
         
@@ -766,10 +810,12 @@ extension NewHistoryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         checkFill()
+        check()
         return true
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        check()
         switch textField {
         case nameTextField:
             name = nameTextField?.text ?? ""
@@ -792,6 +838,7 @@ extension NewHistoryViewController: UITextFieldDelegate {
     
     
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        check()
         switch textField {
         case nameTextField:
             name = nameTextField?.text ?? ""
