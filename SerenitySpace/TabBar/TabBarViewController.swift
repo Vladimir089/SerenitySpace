@@ -15,7 +15,7 @@ class TabBarViewController: UITabBarController {
         settingsTab()
         tabBar.unselectedItemTintColor = UIColor(red: 251/255, green: 243/255, blue: 179/255, alpha: 1)
         tabBar.tintColor = UIColor(red: 255/255, green: 215/255, blue: 7/255, alpha: 1)
-        
+        UserDefaults.standard.setValue(true, forKey: "tab")
         user = loadUser()
     }
     
@@ -29,9 +29,16 @@ class TabBarViewController: UITabBarController {
         let waterTabItem = UITabBarItem(title: "", image: .tab2.resize(targetSize: CGSize(width: 24, height: 24)), tag: 0)
         waterVC.tabBarItem = waterTabItem
         
-        viewControllers = [racionVC, waterVC]
+        let settingsVC = SettingsViewController()
+        let settingsTabItem = UITabBarItem(title: "", image: .settings.resize(targetSize: CGSize(width: 24, height: 24)), tag: 0)
+        settingsVC.tabBarItem = settingsTabItem
+        
+        viewControllers = [racionVC, waterVC, settingsVC]
         
     }
+    
+    
+    
     
     func loadUser() -> User? {
         if let userData = UserDefaults.standard.data(forKey: "user") {

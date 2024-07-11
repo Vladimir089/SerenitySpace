@@ -50,3 +50,16 @@ struct Ingridients: Codable {
     var name: String
     var quanity: String
 }
+
+
+struct Eat: Codable {
+    var image: Data
+    var name: String
+    var count: String
+    
+    init(image: Data, name: String, count: String) {
+        self.image = image
+        self.name = name
+        self.count = count
+    }
+}
